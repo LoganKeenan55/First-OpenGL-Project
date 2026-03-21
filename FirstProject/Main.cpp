@@ -73,9 +73,19 @@ int main() {
 
 
 	while (!glfwWindowShouldClose(window)) {
+		
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+
 		shaderProgram.Activate();
+
+		float timeValue = glfwGetTime();
+		float greenValue = (sin(timeValue) / 2.0f) + .5f;
+		int vertexColorLocation = glGetUniformLocation(shaderProgram.ID, "ourColor");
+		glUseProgram(shaderProgram.ID);
+		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
+		
 		VAO1.Bind();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
