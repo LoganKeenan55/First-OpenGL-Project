@@ -12,15 +12,14 @@ int gScreenHeight = 800;
 
 
 float vertices[] = {
-		0.5f, 0.5f, 0.0f, // top right
-		0.5f, -0.5f, 0.0f, // bottom right
-		-0.5f, -0.5f, 0.0f, // bottom left
-		-0.5f, 0.5f, 0.0f // top left
+		//pos				 //colors
+		0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f, // bottem right
+		-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,// bottom left
+		0.0f, 0.5f, 0.0f,    0.0f, 0.0f, 1.0f// top left
 };
 
 GLuint indicies[] = {
-	0,1,3,
-	1,2,3
+	0,1,2
 
 };
 
@@ -66,7 +65,8 @@ int main() {
 	EBO EBO1(indicies, sizeof(indicies));
 	
 	//links VBO to VAO
-	VAO1.LinkVBO(VBO1, 0);
+	VAO1.LinkVBO(VBO1, 0,3,6*sizeof(float),(void*)0);
+	VAO1.LinkVBO(VBO1, 1,3,6*sizeof(float),(void*)(3*sizeof(float)));
 	VAO1.Unbind();
 	VBO1.Unbind();
 	EBO1.Unbind();
@@ -79,15 +79,9 @@ int main() {
 
 		shaderProgram.Activate();
 
-		float timeValue = glfwGetTime();
-		float greenValue = (sin(timeValue) / 2.0f) + .5f;
-		int vertexColorLocation = glGetUniformLocation(shaderProgram.ID, "ourColor");
-		glUseProgram(shaderProgram.ID);
-		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-
 		
 		VAO1.Bind();
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
