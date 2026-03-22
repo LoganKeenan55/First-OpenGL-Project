@@ -66,7 +66,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\birb.jpg">
+    <Image Include="birb.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
   </ItemGroup>

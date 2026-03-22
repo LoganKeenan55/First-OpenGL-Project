@@ -1,12 +1,14 @@
 #version 330 core
-out vec4 FragColor;
+out vec4 fragColor;
 in vec3 ourColor; // input variable from vs (same name and type)
 in vec2 texCoord;
 
 uniform sampler2D tex0;
+uniform float time;
 
 uniform float offset;  
 void main()
 {
-	FragColor = texture(tex0,texCoord);
+	fragColor = texture(tex0, texCoord);
+    fragColor.a *= step(time / 5, fragColor.b);
 }
