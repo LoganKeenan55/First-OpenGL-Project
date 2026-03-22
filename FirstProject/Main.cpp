@@ -82,8 +82,7 @@ int main() {
 		float timeValue = glfwGetTime()*2;
 		float offsetValue = (sin(timeValue) / 2.0f);
 		
-		int offsetLoc = glGetUniformLocation(shaderProgram.ID, "offset");
-		glUniform1f(offsetLoc, offsetValue);
+		shaderProgram.setFloat("offset", offsetValue);
 
 		VAO1.Bind();
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);

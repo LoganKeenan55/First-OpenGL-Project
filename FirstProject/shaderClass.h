@@ -16,6 +16,10 @@ public:
 	Shader(const char* vertexFile, const char* fragmentFile);
 	void Activate();
 	void Delete();
+
+	void setBool(const std::string& name, bool value) const;
+	void setInt(const std::string& name, int value) const;
+	void setFloat(const std::string& name, float value) const;
 };
 
-#endif // !SHADER_CLASS_H
+#endif
