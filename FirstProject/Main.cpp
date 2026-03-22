@@ -1,6 +1,7 @@
 #include<iostream>
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
+#include<stb/stb_image.h>
 
 #include"shaderClass.h"
 #include"VAO.h"
@@ -13,14 +14,15 @@ int gScreenHeight = 800;
 
 float vertices[] = {
 		//pos				 //colors
-		0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f, // bottem right
-		-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,// bottom left
-		0.0f, 0.5f, 0.0f,    0.0f, 0.0f, 1.0f// top 
+		-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,	0.0f, 0.0f, //bottom left
+		0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f,	2.0f, 0.0f,  //bottem right
+		-0.5f, 0.5f, 0.0f,   1.0f, 0.0f, 0.0f,  0.0f, 2.0f,  //upper left
+		0.5f, 0.5f, 0.0f,    1.0f, 1.0f, 1.0f,	2.0f, 2.0f  //upper right
 };
 
 GLuint indicies[] = {
-	0,1,2
-
+	0,1,2,
+	1,3,2
 };
 
 int main() {
@@ -65,12 +67,38 @@ int main() {
 	EBO EBO1(indicies, sizeof(indicies));
 	
 	//links VBO to VAO
-	VAO1.LinkVBO(VBO1, 0,3,6*sizeof(float),(void*)0);
-	VAO1.LinkVBO(VBO1, 1,3,6*sizeof(float),(void*)(3*sizeof(float)));
+	VAO1.LinkVBO(VBO1, 0,3,8*sizeof(float),(void*)0);
+	VAO1.LinkVBO(VBO1, 1,3,8*sizeof(float),(void*)(3*sizeof(float)));
+	VAO1.LinkVBO(VBO1, 2,2,8*sizeof(float),(void*)(6*sizeof(float)));
 	VAO1.Unbind();
 	VBO1.Unbind();
 	EBO1.Unbind();
 
+	//texture
+
+	int imgWidth, imgHight, numColorChannels;
+	stbi_set_flip_vertically_on_load(true);
+	unsigned char* bytes = stbi_load("birb.jpg", &imgWidth, &imgHight, &numColorChannels, 0);
+
+	GLuint texture;
+	glGenTextures(1, &texture);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHight, 0, GL_RGB, GL_UNSIGNED_BYTE, bytes);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	stbi_image_free(bytes);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	
+	shaderProgram.setInt("text0", 0);
 
 	while (!glfwWindowShouldClose(window)) {
 		
@@ -78,14 +106,9 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		shaderProgram.Activate();
-
-		float timeValue = glfwGetTime()*2;
-		float offsetValue = (sin(timeValue) / 2.0f);
-		
-		shaderProgram.setFloat("offset", offsetValue);
-
+		glBindTexture(GL_TEXTURE_2D, texture);
 		VAO1.Bind();
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -94,6 +117,8 @@ int main() {
 	VBO1.Delete();
 	EBO1.Delete();
 	shaderProgram.Delete();
+	glDeleteTextures(1, &texture);
+
 
 	glfwDestroyWindow(window);
 
