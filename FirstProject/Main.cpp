@@ -15,7 +15,7 @@ float vertices[] = {
 		//pos				 //colors
 		0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f, // bottem right
 		-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,// bottom left
-		0.0f, 0.5f, 0.0f,    0.0f, 0.0f, 1.0f// top left
+		0.0f, 0.5f, 0.0f,    0.0f, 0.0f, 1.0f// top 
 };
 
 GLuint indicies[] = {
@@ -79,7 +79,12 @@ int main() {
 
 		shaderProgram.Activate();
 
+		float timeValue = glfwGetTime()*2;
+		float offsetValue = (sin(timeValue) / 2.0f);
 		
+		int offsetLoc = glGetUniformLocation(shaderProgram.ID, "offset");
+		glUniform1f(offsetLoc, offsetValue);
+
 		VAO1.Bind();
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
