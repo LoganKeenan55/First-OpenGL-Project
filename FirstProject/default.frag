@@ -9,6 +9,9 @@ uniform float time;
 uniform float offset;  
 void main()
 {
-	fragColor = texture(tex0, texCoord);
+	vec4 baseColor = texture(tex0, texCoord);
+	float moveAmmount = baseColor.b*time*.2;
+	vec2 shiftCoord = vec2(texCoord.x, texCoord.y+moveAmmount);
+	fragColor = texture(tex0, shiftCoord);
     fragColor.a *= step(time / 5, fragColor.b);
 }

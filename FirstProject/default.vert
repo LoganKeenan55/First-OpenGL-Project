@@ -4,14 +4,17 @@ layout (location = 1) in vec3 aColor; //color has attribute pos 1
 layout (location = 2) in vec2 aTEX; //texture has attribute pos 2
 
 
-out vec3 ourColor;
 out vec2 texCoord;
 
+uniform mat4 transform;
+uniform float time;
 
 void main()
 {
-	gl_Position = vec4(aPos, 1.0);
-	ourColor = aColor; //set ourColor to color from the vertex data
+	
+	gl_Position = transform * vec4(aPos, 1.0);
+	
+
 	texCoord = aTEX;
 }
  

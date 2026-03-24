@@ -3,6 +3,10 @@
 #include<GLFW/glfw3.h>
 #include<stb/stb_image.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include"shaderClass.h"
 #include"VAO.h"
 #include"VBO.h"
@@ -26,6 +30,10 @@ GLuint indicies[] = {
 };
 
 int main() {
+
+	glm::mat4 trans = glm::mat2(1.0f);
+	//trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+	trans = glm::scale(trans, glm::vec3(2, 2, 2));
 	 
 	glfwInit();
 
@@ -117,7 +125,7 @@ int main() {
 		shaderProgram.Activate();
 		float timeValue = glfwGetTime();
 		shaderProgram.setFloat("time", timeValue);
-
+		shaderProgram.setMat4("transform", trans);
 
 		
 		VAO1.Bind();
