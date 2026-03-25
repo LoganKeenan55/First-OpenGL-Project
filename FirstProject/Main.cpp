@@ -18,23 +18,25 @@ int gScreenHeight = 800;
 
 float vertices[] = {
 		//pos				 //colors			//texture coords
-		-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,	0.0f, 0.0f, //bottom left
-		0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f,	1.0f, 0.0f,  //bottem right
-		-0.5f, 0.5f, 0.0f,   1.0f, 0.0f, 0.0f,  0.0f, 1.0f,  //upper left
-		0.5f, 0.5f, 0.0f,    1.0f, 1.0f, 1.0f,	1.0f, 1.0f  //upper right
+		-0.5f, 0.0f, 0.5f,  0.0f, 1.0f, 0.0f,	0.0f, 0.0f,
+		-0.5f, 0.0f, -0.5f,    0.0f, 0.0f, 1.0f,	2.0f, 0.0f, 
+		0.5f, 0.0f, -0.5f,   1.0f, 0.0f, 0.0f,  0.0f, 0.0f,  
+		0.5f, 0.0f, 0.5f,    1.0f, 1.0f, 1.0f,	2.0f, 0.0f,  
+		0.0f, 0.8f, 0.0f,    1.0f, 1.0f, 1.0f,	1.0f, 2.0f  
 };
 
 GLuint indicies[] = {
 	0,1,2,
-	1,3,2
+	0,2,3,
+	0,1,4,
+	1,2,4,
+	2,3,4,
+	3,0,4
 };
 
 int main() {
 
-	glm::mat4 trans = glm::mat2(1.0f);
-	//trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
-	trans = glm::scale(trans, glm::vec3(2, 2, 2));
-	 
+	
 	glfwInit();
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -83,7 +85,7 @@ int main() {
 	VBO1.Unbind();
 	EBO1.Unbind();
 
-	//texture
+	//textur
 	int imgWidth, imgHeight, numColorChannels;
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* bytes = stbi_load("birb.png", &imgWidth, &imgHeight, &numColorChannels, 0);
@@ -112,24 +114,40 @@ int main() {
 	glTexImage2D(GL_TEXTURE_2D, 0, format, imgWidth, imgHeight, 0, format, GL_UNSIGNED_BYTE, bytes);
 	glGenerateMipmap(GL_TEXTURE_2D);
 
+	glEnable(GL_DEPTH_TEST);
 	
 	
 	shaderProgram.setInt("text0", 0);
 
+
 	while (!glfwWindowShouldClose(window)) {
+		shaderProgram.Activate();
+
+		glm::mat4 model = glm::mat4(1.0f);
+		glm::mat4 view = glm::mat4(1.0f); //moving around world
+		glm::mat4 projection = glm::mat4(1.0f); //perspective
+		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f),
+			glm::vec3(0.5f, 1.0f, 0.0f));
+
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -2.0f));
+		projection = glm::perspective(glm::radians(45.0f), (float)gScreenHeight/ (float)gScreenWidth, 0.1f, 100.0f);
+
+		shaderProgram.setMat4("model", model);
+		shaderProgram.setMat4("view", view);
+		shaderProgram.setMat4("projection", projection);
 
 
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		shaderProgram.Activate();
+		
 		float timeValue = glfwGetTime();
-		shaderProgram.setFloat("time", timeValue);
-		shaderProgram.setMat4("transform", trans);
+		float timeSin = (sin(timeValue) / 2.0f)*2;
+		shaderProgram.setFloat("time", timeSin);
 
 		
 		VAO1.Bind();
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, sizeof(indicies)/sizeof(int), GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
