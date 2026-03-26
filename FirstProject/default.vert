@@ -6,15 +6,12 @@ layout (location = 2) in vec2 aTEX; //texture has attribute pos 2
 
 out vec2 texCoord;
 
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-uniform float time;
+uniform mat4 camMatrix;
 
 void main()
 {
 	
-	gl_Position = projection * view * model * vec4(aPos, 1.0);
+	gl_Position = camMatrix * vec4(aPos, 1.0);
 	
 
 	texCoord = aTEX;

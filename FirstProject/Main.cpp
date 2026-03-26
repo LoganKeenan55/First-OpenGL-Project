@@ -11,6 +11,8 @@
 #include"VAO.h"
 #include"VBO.h"
 #include"EBO.h"
+#include"camera.h"
+
 
 int gScreenWidth = 800;
 int gScreenHeight = 800;
@@ -34,6 +36,20 @@ GLuint indicies[] = {
 	3,0,4
 };
 
+glm::vec3 cubePositions[] = {
+glm::vec3(0.0f, 0.0f, 0.0f),
+glm::vec3(2.0f, 5.0f, -15.0f),
+glm::vec3(-1.5f, -2.2f, -2.5f),
+glm::vec3(-3.8f, -2.0f, -12.3f),
+glm::vec3(2.4f, -0.4f, -3.5f),
+glm::vec3(-1.7f, 3.0f, -7.5f),
+glm::vec3(1.3f, -2.0f, -2.5f),
+glm::vec3(1.5f, 2.0f, -2.5f),
+glm::vec3(1.5f, 0.2f, -1.5f),
+glm::vec3(-1.3f, 1.0f, -1.5f)
+};
+
+
 int main() {
 
 	
@@ -45,7 +61,7 @@ int main() {
 
 
 
-	GLFWwindow* window = glfwCreateWindow(gScreenHeight, gScreenHeight, "Hello, World!", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(gScreenWidth, gScreenHeight, "Hello, World!", NULL, NULL);
 
 	if (!window) {
 		std::cout << "Failed to create a window" << std::endl;
@@ -88,7 +104,7 @@ int main() {
 	//textur
 	int imgWidth, imgHeight, numColorChannels;
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char* bytes = stbi_load("birb.png", &imgWidth, &imgHeight, &numColorChannels, 0);
+	unsigned char* bytes = stbi_load("brick.png", &imgWidth, &imgHeight, &numColorChannels, 0);
 
 	GLuint texture;
 	glEnable(GL_BLEND);
@@ -117,35 +133,22 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 	
 	
-	shaderProgram.setInt("text0", 0);
 
+	Camera camera(gScreenWidth, gScreenHeight, glm::vec3(0.0f, 0.0f, 2.0f));
+
+	float deltaTime = 0.0f;
+	float lastFrame = 0.0f;
 
 	while (!glfwWindowShouldClose(window)) {
-		shaderProgram.Activate();
-
-		glm::mat4 model = glm::mat4(1.0f);
-		glm::mat4 view = glm::mat4(1.0f); //moving around world
-		glm::mat4 projection = glm::mat4(1.0f); //perspective
-		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f),
-			glm::vec3(0.5f, 1.0f, 0.0f));
-
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -2.0f));
-		projection = glm::perspective(glm::radians(45.0f), (float)gScreenHeight/ (float)gScreenWidth, 0.1f, 100.0f);
-
-		shaderProgram.setMat4("model", model);
-		shaderProgram.setMat4("view", view);
-		shaderProgram.setMat4("projection", projection);
-
-
+		deltaTime = glfwGetTime() - lastFrame;
+		lastFrame = glfwGetTime();
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		
-		float timeValue = glfwGetTime();
-		float timeSin = (sin(timeValue) / 2.0f)*2;
-		shaderProgram.setFloat("time", timeSin);
+		shaderProgram.Activate();
+		camera.Matrix(60.0f, 0.1f, 100.0f, shaderProgram, "camMatrix");
+		camera.handleInput(window,deltaTime);
 
-		
 		VAO1.Bind();
 		glDrawElements(GL_TRIANGLES, sizeof(indicies)/sizeof(int), GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
