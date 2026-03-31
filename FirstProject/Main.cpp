@@ -52,7 +52,7 @@ glm::vec3(-1.3f, 1.0f, -1.5f)
 
 int main() {
 
-	
+
 	glfwInit();
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -140,11 +140,19 @@ int main() {
 	float lastFrame = 0.0f;
 
 	while (!glfwWindowShouldClose(window)) {
+
 		deltaTime = glfwGetTime() - lastFrame;
 		lastFrame = glfwGetTime();
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
+		glm::mat4 model = glm::mat4(1.0f);
+
+		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f),
+			glm::vec3(0.0f, 1.0f, 0.0f));
+
+		shaderProgram.setMat4("model", model);
+
 		shaderProgram.Activate();
 		camera.Matrix(60.0f, 0.1f, 100.0f, shaderProgram, "camMatrix");
 		camera.handleInput(window,deltaTime);

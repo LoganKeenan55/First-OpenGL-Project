@@ -7,11 +7,12 @@ layout (location = 2) in vec2 aTEX; //texture has attribute pos 2
 out vec2 texCoord;
 
 uniform mat4 camMatrix;
+uniform mat4 model;
 
 void main()
 {
 	
-	gl_Position = camMatrix * vec4(aPos, 1.0);
+	gl_Position = camMatrix * model * vec4(aPos, 1.0);
 	
 
 	texCoord = aTEX;
