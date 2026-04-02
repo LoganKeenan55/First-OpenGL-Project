@@ -36,19 +36,33 @@ GLuint indicies[] = {
 	3,0,4
 };
 
-glm::vec3 cubePositions[] = {
-glm::vec3(0.0f, 0.0f, 0.0f),
-glm::vec3(2.0f, 5.0f, -15.0f),
-glm::vec3(-1.5f, -2.2f, -2.5f),
-glm::vec3(-3.8f, -2.0f, -12.3f),
-glm::vec3(2.4f, -0.4f, -3.5f),
-glm::vec3(-1.7f, 3.0f, -7.5f),
-glm::vec3(1.3f, -2.0f, -2.5f),
-glm::vec3(1.5f, 2.0f, -2.5f),
-glm::vec3(1.5f, 0.2f, -1.5f),
-glm::vec3(-1.3f, 1.0f, -1.5f)
+
+GLfloat lightVertices[] = {
+	-0.1f,-0.1f,0.1f,
+	-0.1f,-0.1f,-0.1f,
+	0.1f,-0.1f,-0.1f,
+	0.1f,-0.1f,0.1f,
+	-0.1f,0.1f,0.1f,
+	-0.1f,0.1f,-0.1f,
+	0.1f,0.1f,-0.1f,
+	0.1f,0.1f,0.1f
 };
 
+GLuint lightIndices[] = {
+	0,1,2,
+	0,2,3,
+	0,4,7,
+	0,7,3,
+	3,7,6,
+	3,6,2,
+	2,6,5,
+	2,5,1,
+	1,5,4,
+	1,4,0,
+	4,5,6,
+	4,6,7
+
+};
 
 int main() {
 
@@ -101,7 +115,34 @@ int main() {
 	VBO1.Unbind();
 	EBO1.Unbind();
 
-	//textur
+	//light square
+	Shader lightShader("light.vert", "light.frag");
+	VAO lightVAO;
+	lightVAO.Bind();
+
+	VBO lightVBO(lightVertices, sizeof(lightVertices));
+	EBO lightEBO(lightIndices, sizeof(lightIndices));
+
+	lightVAO.LinkVBO(lightVBO, 0, 3, 3 * sizeof(float), (void*)0);
+
+	lightVAO.Unbind();
+	lightVBO.Unbind();
+	lightEBO.Unbind();
+
+	glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
+	glm::mat4 lightModel = glm::mat4(1.0f);
+	lightModel = glm::translate(lightModel, lightPos);
+
+	glm::vec3 pyramidPos = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::mat4 pyramidModel = glm::mat4(1.0f);
+	pyramidModel = glm::translate(pyramidModel, pyramidPos);
+
+	lightShader.Activate();
+	lightShader.setMat4("model", lightModel);
+	shaderProgram.Activate();
+	shaderProgram.setMat4("model", pyramidModel);
+	
+	//texture
 	int imgWidth, imgHeight, numColorChannels;
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* bytes = stbi_load("brick.png", &imgWidth, &imgHeight, &numColorChannels, 0);
@@ -145,20 +186,33 @@ int main() {
 		lastFrame = glfwGetTime();
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
-		glm::mat4 model = glm::mat4(1.0f);
 
-		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f),
+		camera.handleInput(window,deltaTime);
+		camera.updateMatrix(60.0f, 0.1f, 100.0f);
+
+		//Pyramid
+		glm::mat4 pyramidModel = glm::mat4(1.0f);
+
+		pyramidModel = glm::rotate(pyramidModel, (float)glfwGetTime() * glm::radians(50.0f),
 			glm::vec3(0.0f, 1.0f, 0.0f));
 
-		shaderProgram.setMat4("model", model);
-
 		shaderProgram.Activate();
-		camera.Matrix(60.0f, 0.1f, 100.0f, shaderProgram, "camMatrix");
-		camera.handleInput(window,deltaTime);
+		shaderProgram.setMat4("model", pyramidModel);
+		camera.Matrix(shaderProgram, "camMatrix");
+		glDrawElements(GL_TRIANGLES, sizeof(indicies)/sizeof(int), GL_UNSIGNED_INT, 0);
+		
+		
+		//light
+		lightShader.Activate();
+		lightShader.setMat4("model", lightModel);
+		camera.Matrix(lightShader, "camMatrix");
+		lightVAO.Bind();
+		glDrawElements(GL_TRIANGLES, sizeof(lightIndices)/sizeof(int), GL_UNSIGNED_INT, 0);
+
+
+
 
 		VAO1.Bind();
-		glDrawElements(GL_TRIANGLES, sizeof(indicies)/sizeof(int), GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}

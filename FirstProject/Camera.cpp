@@ -7,32 +7,38 @@ Camera::Camera(int w, int h, glm::vec3 p) {
 	Position = p;
 }
 
-void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shader, const char* uniform) {
+void Camera::updateMatrix(float FOVdeg, float nearPlane, float farPlane) {
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projection = glm::mat4(1.0f);
 
 	view = glm::lookAt(Position, Position + Orientation, Up);
 	projection = glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane);
 
-	glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(projection * view));
+	cameraMatrix = projection * view;
+}
+
+void Camera::Matrix(Shader& shader, const char* uniform) {
+	glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
 
 }
+
+
 void Camera::handleInput(GLFWwindow* window,float dt){
-	speed* dt;
+	float currentSpeed = speed * dt;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		Position += speed * Orientation;
+		Position += currentSpeed * Orientation;
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		Position -= speed * Orientation;
+		Position -= currentSpeed * Orientation;
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		Position -= glm::normalize(glm::cross(Orientation, Up)) *
-		speed;
+		currentSpeed;
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		Position += glm::normalize(glm::cross(Orientation, Up)) *
-		speed;
+		currentSpeed;
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-		Position.y += speed;
+		Position.y += currentSpeed;
 	if (glfwGetKey(window,GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-		Position.y -= speed;
+		Position.y -= currentSpeed;
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
 
@@ -48,7 +54,7 @@ void Camera::handleInput(GLFWwindow* window,float dt){
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 
 		float rotX = sensitivity * (float)(mouseY - (height / 2)) / height;
-		float rotY = sensitivity * (float)(mouseX - (height / 2)) / height;
+		float rotY = sensitivity * (float)(mouseX - (width / 2)) / width;
 
 		glm::vec3 newOrientation = glm::rotate(Orientation, glm::radians(-rotX), glm::normalize(glm::cross(Orientation, Up)));
 		
