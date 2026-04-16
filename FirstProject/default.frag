@@ -23,9 +23,12 @@ void main()
 
 	float diffuse = max(dot(normal,lightDirection),0.0f);
 
-	float specularLight = 0.5f;
+	float specularLight = 0.8f;
 	vec3 viewDirection = normalize(camPos - currPos);
-
-	fragColor =  texture(tex0, texCoord) * lightColor * (diffuse+ambient);
+	vec3 reflectionDirection = reflect(-lightDirection,normal);
+	float specAmount = pow(max(dot(viewDirection,reflectionDirection),0.0f),8);
+	float specular = specAmount * specularLight;
+	
+	fragColor =  texture(tex0, texCoord) * lightColor * (diffuse+ambient + specular);
 
 }

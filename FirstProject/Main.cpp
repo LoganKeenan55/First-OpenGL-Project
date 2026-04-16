@@ -166,7 +166,6 @@ int main() {
 	shaderProgram.setMat4("model", pyramidModel);
 	shaderProgram.setVec4("lightColor", lightColor);
 	shaderProgram.setVec3("lightPos", lightPos);
-	shaderProgram.setVec3("camPos", camera.Position);
 
 	//texture
 	int imgWidth, imgHeight, numColorChannels;
@@ -228,7 +227,8 @@ int main() {
 		shaderProgram.setMat4("model", pyramidModel);
 		camera.Matrix(shaderProgram, "camMatrix");
 		glDrawElements(GL_TRIANGLES, sizeof(indicies)/sizeof(int), GL_UNSIGNED_INT, 0);
-		
+		shaderProgram.setVec3("camPos", camera.Position);
+
 		
 		//light
 		lightShader.Activate();
