@@ -18,22 +18,38 @@ int gScreenWidth = 800;
 int gScreenHeight = 800;
 
 
-float vertices[] = {
-		//pos				 //colors			//texture coords
-		-0.5f, 0.0f, 0.5f,  0.0f, 1.0f, 0.0f,	0.0f, 0.0f,
-		-0.5f, 0.0f, -0.5f,    0.0f, 0.0f, 1.0f,	2.0f, 0.0f, 
-		0.5f, 0.0f, -0.5f,   1.0f, 0.0f, 0.0f,  0.0f, 0.0f,  
-		0.5f, 0.0f, 0.5f,    1.0f, 1.0f, 1.0f,	2.0f, 0.0f,  
-		0.0f, 0.8f, 0.0f,    1.0f, 1.0f, 1.0f,	1.0f, 2.0f  
+// Vertices coordinates
+GLfloat vertices[] =
+{  //   COORDINATES        /        COLORS           /   TexCoord   /     NORMALS      //
+	-0.5f, 0.0f,  0.5f,    0.83f, 0.70f, 0.44f,      0.0f, 0.0f,     0.0f, -1.0f, 0.0f, // Bottom side
+	-0.5f, 0.0f, -0.5f,    0.83f, 0.70f, 0.44f,      0.0f, 5.0f,     0.0f, -1.0f, 0.0f, // Bottom side
+	 0.5f, 0.0f, -0.5f,    0.83f, 0.70f, 0.44f,      5.0f, 5.0f,     0.0f, -1.0f, 0.0f, // Bottom side
+	 0.5f, 0.0f,  0.5f,    0.83f, 0.70f, 0.44f,      5.0f, 0.0f,     0.0f, -1.0f, 0.0f, // Bottom side
+
+	-0.5f, 0.0f,  0.5f,    0.83f, 0.70f, 0.44f,      0.0f, 0.0f,    -0.8f, 0.5f, 0.0f, // Left Side
+	-0.5f, 0.0f, -0.5f,    0.83f, 0.70f, 0.44f,      5.0f, 0.0f,    -0.8f, 0.5f, 0.0f, // Left Side
+	 0.0f, 0.8f,  0.0f,    0.92f, 0.86f, 0.76f,      2.5f, 5.0f,    -0.8f, 0.5f, 0.0f, // Left Side
+
+	-0.5f, 0.0f, -0.5f,    0.83f, 0.70f, 0.44f,      5.0f, 0.0f,     0.0f, 0.5f, -0.8f, // Non-facing side
+	 0.5f, 0.0f, -0.5f,    0.83f, 0.70f, 0.44f,      0.0f, 0.0f,     0.0f, 0.5f, -0.8f, // Non-facing side
+	 0.0f, 0.8f,  0.0f,    0.92f, 0.86f, 0.76f,      2.5f, 5.0f,     0.0f, 0.5f, -0.8f, // Non-facing side
+
+	 0.5f, 0.0f, -0.5f,    0.83f, 0.70f, 0.44f,      0.0f, 0.0f,     0.8f, 0.5f, 0.0f, // Right side
+	 0.5f, 0.0f,  0.5f,    0.83f, 0.70f, 0.44f,      5.0f, 0.0f,     0.8f, 0.5f, 0.0f, // Right side
+	 0.0f, 0.8f,  0.0f,    0.92f, 0.86f, 0.76f,      2.5f, 5.0f,     0.8f, 0.5f, 0.0f, // Right side
+
+	 0.5f, 0.0f,  0.5f,    0.83f, 0.70f, 0.44f,      5.0f, 0.0f,     0.0f, 0.5f, 0.8f, // Facing side
+	-0.5f, 0.0f,  0.5f,    0.83f, 0.70f, 0.44f,      0.0f, 0.0f,     0.0f, 0.5f, 0.8f, // Facing side
+	 0.0f, 0.8f,  0.0f,    0.92f, 0.86f, 0.76f,      2.5f, 5.0f,     0.0f, 0.5f, 0.8f  // Facing side
 };
 
 GLuint indicies[] = {
 	0,1,2,
 	0,2,3,
-	0,1,4,
-	1,2,4,
-	2,3,4,
-	3,0,4
+	4,6,5,
+	7,9,8,
+	10,12,11,
+	13,15,14
 };
 
 
@@ -66,6 +82,7 @@ GLuint lightIndices[] = {
 
 int main() {
 
+	Camera camera(gScreenWidth, gScreenHeight, glm::vec3(0.0f, 0.0f, 2.0f));
 
 	glfwInit();
 
@@ -107,13 +124,17 @@ int main() {
 	EBO EBO1(indicies, sizeof(indicies));
 	
 	//links VBO to VAO
-	VAO1.LinkVBO(VBO1, 0,3,8*sizeof(float),(void*)0);
-	VAO1.LinkVBO(VBO1, 1,3,8*sizeof(float),(void*)(3*sizeof(float)));
-	VAO1.LinkVBO(VBO1, 2,2,8*sizeof(float),(void*)(6*sizeof(float)));
+	VAO1.LinkVBO(VBO1, 0,3,11*sizeof(float),(void*)0);
+	VAO1.LinkVBO(VBO1, 1,3,11*sizeof(float),(void*)(3*sizeof(float)));
+	VAO1.LinkVBO(VBO1, 2,2,11*sizeof(float),(void*)(6*sizeof(float)));
+	VAO1.LinkVBO(VBO1, 3,3,11*sizeof(float),(void*)(8*sizeof(float)));
 
 	VAO1.Unbind();
 	VBO1.Unbind();
 	EBO1.Unbind();
+
+	glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f,1.0f);
+
 
 	//light square
 	Shader lightShader("light.vert", "light.frag");
@@ -139,16 +160,24 @@ int main() {
 
 	lightShader.Activate();
 	lightShader.setMat4("model", lightModel);
+	lightShader.setVec4("lightColor", lightColor);
+
 	shaderProgram.Activate();
 	shaderProgram.setMat4("model", pyramidModel);
-	
+	shaderProgram.setVec4("lightColor", lightColor);
+	shaderProgram.setVec3("lightPos", lightPos);
+	shaderProgram.setVec3("camPos", camera.Position);
+
 	//texture
 	int imgWidth, imgHeight, numColorChannels;
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* bytes = stbi_load("brick.png", &imgWidth, &imgHeight, &numColorChannels, 0);
 
 	GLuint texture;
-	glEnable(GL_BLEND);
+	glDisable(GL_BLEND);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glGenTextures(1, &texture);
 	glActiveTexture(GL_TEXTURE0);
@@ -175,7 +204,6 @@ int main() {
 	
 	
 
-	Camera camera(gScreenWidth, gScreenHeight, glm::vec3(0.0f, 0.0f, 2.0f));
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
@@ -193,8 +221,8 @@ int main() {
 		//Pyramid
 		glm::mat4 pyramidModel = glm::mat4(1.0f);
 
-		pyramidModel = glm::rotate(pyramidModel, (float)glfwGetTime() * glm::radians(50.0f),
-			glm::vec3(0.0f, 1.0f, 0.0f));
+		//pyramidModel = glm::rotate(pyramidModel, (float)glfwGetTime() * glm::radians(50.0f),
+			//glm::vec3(0.0f, 1.0f, 0.0f));
 
 		shaderProgram.Activate();
 		shaderProgram.setMat4("model", pyramidModel);
