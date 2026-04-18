@@ -113,7 +113,7 @@ int main() {
 	VBO1.Unbind();
 	EBO1.Unbind();
 
-	glm::vec4 lightColor = glm::vec4(1.0f, 0.0f, 1.0f,1.0f);
+	glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 
 	//light square
@@ -181,6 +181,17 @@ int main() {
 		glDrawElements(GL_TRIANGLES, sizeof(indicies)/sizeof(int), GL_UNSIGNED_INT, 0);
 		shaderProgram.setVec3("camPos", camera.Position);
 
+
+		float timeValue = glfwGetTime() * 2;
+		float offsetValue = (sin(timeValue) / 2.0f);
+
+		glm::vec3 newLightPos = glm::vec3(
+			lightPos.x + offsetValue,
+			lightPos.y,
+			lightPos.z
+		);
+
+		shaderProgram.setVec3("lightPos", newLightPos);
 		
 		//light
 		lightShader.Activate();
@@ -189,7 +200,7 @@ int main() {
 		lightVAO.Bind();
 		glDrawElements(GL_TRIANGLES, sizeof(lightIndices)/sizeof(int), GL_UNSIGNED_INT, 0);
 
-
+		lightShader.setVec3("offset", newLightPos);
 
 
 		VAO1.Bind();
