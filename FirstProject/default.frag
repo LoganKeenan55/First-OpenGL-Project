@@ -20,20 +20,25 @@ uniform float offset;
 
 vec4 pointLight(){
 	
+
+
+
 	vec3 lightVector = lightPos - currPos;
 	float dist = length(lightVector);
-
 	float a = 1.0f;
 	float b = 0.7f;
 	float intensity = 1.0f / (a * dist * dist + b * dist + 1.0f);
 
-
+	//ambient
 	float ambient = .20f;
+
+	//diffuse
 	vec3 normal = normalize(normal);
 	vec3 lightDirection = normalize(lightVector);
 
 	float diffuse = max(dot(normal,lightDirection),0.0f);
 
+	//specular
 	float specularLight = 0.5f;
 	vec3 viewDirection = normalize(camPos - currPos);
 	vec3 reflectionDirection = reflect(-lightDirection,normal);
@@ -44,8 +49,25 @@ vec4 pointLight(){
 
 }
 
+vec4 directLight(vec3 direction){
+
+	float ambient = .20f;
+	vec3 normal = normalize(normal);
+	vec3 lightDirection = normalize(direction);
+
+	float diffuse = max(dot(normal,lightDirection),0.0f);
+
+	float specularLight = 0.5f;
+	vec3 viewDirection = normalize(camPos - currPos);
+	vec3 reflectionDirection = reflect(-lightDirection,normal);
+	float specAmount = pow(max(dot(viewDirection,reflectionDirection),0.0f),16);
+	float specular = specAmount * specularLight;
+	
+	return (texture(tex0, texCoord) * (diffuse + ambient) + texture(tex1, texCoord).r * specular) * lightColor;
+
+}
 
 void main()
 {
-	fragColor = pointLight();
+	fragColor = directLight(vec3(1.0f,1.0f,1.0f));
 }
