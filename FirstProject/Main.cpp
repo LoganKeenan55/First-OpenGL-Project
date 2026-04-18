@@ -12,7 +12,7 @@
 #include"VBO.h"
 #include"EBO.h"
 #include"camera.h"
-
+#include"Texture.h"
 
 int gScreenWidth = 800;
 int gScreenHeight = 800;
@@ -167,45 +167,12 @@ int main() {
 	shaderProgram.setVec4("lightColor", lightColor);
 	shaderProgram.setVec3("lightPos", lightPos);
 
-	//texture
-	int imgWidth, imgHeight, numColorChannels;
-	stbi_set_flip_vertically_on_load(true);
-	unsigned char* bytes = stbi_load("brick.png", &imgWidth, &imgHeight, &numColorChannels, 0);
-
-	GLuint texture;
-	glDisable(GL_BLEND);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glGenTextures(1, &texture);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-
-	GLenum format;
-	if (numColorChannels == 4)
-		format = GL_RGBA;
-	else if (numColorChannels == 3)
-		format = GL_RGB;
-	else if (numColorChannels == 1)
-		format = GL_RED;
-
-	glTexImage2D(GL_TEXTURE_2D, 0, format, imgWidth, imgHeight, 0, format, GL_UNSIGNED_BYTE, bytes);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	glEnable(GL_DEPTH_TEST);
-	
-	
-
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
+
+	Texture brick("brick.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	brick.texUnit(shaderProgram, "tex0", 0);
 
 	while (!glfwWindowShouldClose(window)) {
 
@@ -225,6 +192,9 @@ int main() {
 
 		shaderProgram.Activate();
 		shaderProgram.setMat4("model", pyramidModel);
+
+		brick.Bind();
+
 		camera.Matrix(shaderProgram, "camMatrix");
 		glDrawElements(GL_TRIANGLES, sizeof(indicies)/sizeof(int), GL_UNSIGNED_INT, 0);
 		shaderProgram.setVec3("camPos", camera.Position);
@@ -248,11 +218,8 @@ int main() {
 	VAO1.Delete();
 	VBO1.Delete();
 	EBO1.Delete();
-	shaderProgram.Delete();
-	glDeleteTextures(1, &texture);
 
-	stbi_image_free(bytes);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	brick.Delete();
 
 	glfwDestroyWindow(window);
 
