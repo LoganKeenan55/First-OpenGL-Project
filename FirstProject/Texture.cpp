@@ -10,7 +10,7 @@ Texture::Texture(const char* image, GLenum textType, GLuint slot, GLenum format,
 	glDisable(GL_BLEND);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
+	glFrontFace(GL_CW);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glGenTextures(1, &ID);
 	glActiveTexture(GL_TEXTURE0 + slot);

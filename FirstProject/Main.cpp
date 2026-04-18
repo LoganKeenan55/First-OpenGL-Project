@@ -14,42 +14,22 @@
 #include"camera.h"
 #include"Texture.h"
 
-int gScreenWidth = 800;
-int gScreenHeight = 800;
+int gScreenWidth = 1920;
+int gScreenHeight = 1080;
 
 
 // Vertices coordinates
 GLfloat vertices[] =
 {  //   COORDINATES        /        COLORS           /   TexCoord   /     NORMALS      //
-	-0.5f, 0.0f,  0.5f,    0.83f, 0.70f, 0.44f,      0.0f, 0.0f,     0.0f, -1.0f, 0.0f, // Bottom side
-	-0.5f, 0.0f, -0.5f,    0.83f, 0.70f, 0.44f,      0.0f, 5.0f,     0.0f, -1.0f, 0.0f, // Bottom side
-	 0.5f, 0.0f, -0.5f,    0.83f, 0.70f, 0.44f,      5.0f, 5.0f,     0.0f, -1.0f, 0.0f, // Bottom side
-	 0.5f, 0.0f,  0.5f,    0.83f, 0.70f, 0.44f,      5.0f, 0.0f,     0.0f, -1.0f, 0.0f, // Bottom side
-
-	-0.5f, 0.0f,  0.5f,    0.83f, 0.70f, 0.44f,      0.0f, 0.0f,    -0.8f, 0.5f, 0.0f, // Left Side
-	-0.5f, 0.0f, -0.5f,    0.83f, 0.70f, 0.44f,      5.0f, 0.0f,    -0.8f, 0.5f, 0.0f, // Left Side
-	 0.0f, 0.8f,  0.0f,    0.92f, 0.86f, 0.76f,      2.5f, 5.0f,    -0.8f, 0.5f, 0.0f, // Left Side
-
-	-0.5f, 0.0f, -0.5f,    0.83f, 0.70f, 0.44f,      5.0f, 0.0f,     0.0f, 0.5f, -0.8f, // Non-facing side
-	 0.5f, 0.0f, -0.5f,    0.83f, 0.70f, 0.44f,      0.0f, 0.0f,     0.0f, 0.5f, -0.8f, // Non-facing side
-	 0.0f, 0.8f,  0.0f,    0.92f, 0.86f, 0.76f,      2.5f, 5.0f,     0.0f, 0.5f, -0.8f, // Non-facing side
-
-	 0.5f, 0.0f, -0.5f,    0.83f, 0.70f, 0.44f,      0.0f, 0.0f,     0.8f, 0.5f, 0.0f, // Right side
-	 0.5f, 0.0f,  0.5f,    0.83f, 0.70f, 0.44f,      5.0f, 0.0f,     0.8f, 0.5f, 0.0f, // Right side
-	 0.0f, 0.8f,  0.0f,    0.92f, 0.86f, 0.76f,      2.5f, 5.0f,     0.8f, 0.5f, 0.0f, // Right side
-
-	 0.5f, 0.0f,  0.5f,    0.83f, 0.70f, 0.44f,      5.0f, 0.0f,     0.0f, 0.5f, 0.8f, // Facing side
-	-0.5f, 0.0f,  0.5f,    0.83f, 0.70f, 0.44f,      0.0f, 0.0f,     0.0f, 0.5f, 0.8f, // Facing side
-	 0.0f, 0.8f,  0.0f,    0.92f, 0.86f, 0.76f,      2.5f, 5.0f,     0.0f, 0.5f, 0.8f  // Facing side
+-1.0f, 0.0f,  1.0f,			 0.0f, 0.0f, 0.0f,			0.0f, 0.0f,   0.0f, 1.0f, 0.0f,
+-1.0f, 0.0f, -1.0f,			 0.0f, 0.0f, 0.0f,			0.0f, 1.0f,   0.0f, 1.0f, 0.0f,
+ 1.0f, 0.0f, -1.0f,			 0.0f, 0.0f, 0.0f,			1.0f, 1.0f,   0.0f, 1.0f, 0.0f,
+ 1.0f, 0.0f,  1.0f,			 0.0f, 0.0f, 0.0f,			1.0f, 0.0f,   0.0f, 1.0f, 0.0f
 };
 
 GLuint indicies[] = {
 	0,1,2,
-	0,2,3,
-	4,6,5,
-	7,9,8,
-	10,12,11,
-	13,15,14
+	0,2,3
 };
 
 
@@ -65,8 +45,8 @@ GLfloat lightVertices[] = {
 };
 
 GLuint lightIndices[] = {
-	0,1,2,
-	0,2,3,
+	0,3,2,
+	2,1,0,
 	0,4,7,
 	0,7,3,
 	3,7,6,
@@ -105,7 +85,7 @@ int main() {
 
 	gladLoadGL();
 
-	glViewport(0, 0, gScreenHeight, gScreenHeight);
+	glViewport(0, 0, gScreenWidth, gScreenHeight);
 
 	//creates a shader object
 	Shader shaderProgram("default.vert", "default.frag");
@@ -171,7 +151,7 @@ int main() {
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
 
-	Texture brick("brick.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	Texture brick("planks.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	brick.texUnit(shaderProgram, "tex0", 0);
 
 	while (!glfwWindowShouldClose(window)) {
@@ -192,7 +172,7 @@ int main() {
 
 		shaderProgram.Activate();
 		shaderProgram.setMat4("model", pyramidModel);
-
+		VAO1.Bind();
 		brick.Bind();
 
 		camera.Matrix(shaderProgram, "camMatrix");
