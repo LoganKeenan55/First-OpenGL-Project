@@ -8,10 +8,12 @@ in vec3 currPos;
 
 
 uniform sampler2D tex0;
+uniform sampler2D tex1;
 uniform float time;
 uniform vec4 lightColor;
 uniform vec3 lightPos;
 uniform vec3 camPos;
+
 
 uniform float offset;  
 void main()
@@ -23,12 +25,12 @@ void main()
 
 	float diffuse = max(dot(normal,lightDirection),0.0f);
 
-	float specularLight = 0.8f;
+	float specularLight = 0.5f;
 	vec3 viewDirection = normalize(camPos - currPos);
 	vec3 reflectionDirection = reflect(-lightDirection,normal);
-	float specAmount = pow(max(dot(viewDirection,reflectionDirection),0.0f),8);
+	float specAmount = pow(max(dot(viewDirection,reflectionDirection),0.0f),16);
 	float specular = specAmount * specularLight;
 	
-	fragColor =  texture(tex0, texCoord) * lightColor * (diffuse+ambient + specular);
+	fragColor =  texture(tex0, texCoord) * lightColor * (diffuse+ambient) +texture(tex1, texCoord).r * specular;
 
 }

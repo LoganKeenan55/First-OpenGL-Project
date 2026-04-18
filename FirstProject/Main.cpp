@@ -151,8 +151,10 @@ int main() {
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
 
-	Texture brick("planks.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	brick.texUnit(shaderProgram, "tex0", 0);
+	Texture plank("planks.png", GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE);
+	Texture plankSpecular("planksSpec.png", GL_TEXTURE_2D, 1, GL_RED, GL_UNSIGNED_BYTE);
+	plank.texUnit(shaderProgram, "tex0", 0);
+	plankSpecular.texUnit(shaderProgram, "tex1", 1);
 
 	while (!glfwWindowShouldClose(window)) {
 
@@ -173,8 +175,8 @@ int main() {
 		shaderProgram.Activate();
 		shaderProgram.setMat4("model", pyramidModel);
 		VAO1.Bind();
-		brick.Bind();
-
+		plank.Bind();
+		plankSpecular.Bind();
 		camera.Matrix(shaderProgram, "camMatrix");
 		glDrawElements(GL_TRIANGLES, sizeof(indicies)/sizeof(int), GL_UNSIGNED_INT, 0);
 		shaderProgram.setVec3("camPos", camera.Position);
@@ -199,8 +201,8 @@ int main() {
 	VBO1.Delete();
 	EBO1.Delete();
 
-	brick.Delete();
-
+	plank.Delete();
+	plankSpecular.Delete();
 	glfwDestroyWindow(window);
 
 	glfwTerminate();
