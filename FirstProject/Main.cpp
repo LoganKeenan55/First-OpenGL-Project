@@ -7,10 +7,11 @@ int gScreenHeight = 1080;
 // Vertices coordinates
 Vertex vertices[] =
 {
+	//position,normal,color,uv
 	Vertex{glm::vec3(-2.0f, 0.0f,  2.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
-	Vertex{glm::vec3(-2.0f, 0.0f, -2.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 2.0f)},
-	Vertex{glm::vec3(2.0f, 0.0f, -2.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(2.0f, 2.0f)},
-	Vertex{glm::vec3(2.0f, 0.0f,  2.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(2.0f, 0.0f)}
+	Vertex{glm::vec3(-2.0f, 0.0f, -2.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 4.0f)},
+	Vertex{glm::vec3(2.0f, 0.0f, -2.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(4.0f, 4.0f)},
+	Vertex{glm::vec3(2.0f, 0.0f,  2.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(4.0f, 0.0f)}
 };
 
 GLuint indices[] = {
@@ -45,6 +46,7 @@ GLuint lightIndices[] = {
 	4,6,7
 
 };
+
 
 int main() {
 
@@ -98,7 +100,7 @@ int main() {
 
 
 
-	glm::vec3 lightPos = glm::vec3(1.0f, 1.0f, 0.5f);
+	glm::vec3 lightPos = glm::vec3(-1.0f, 1.0f, 0.5f);
 	glm::mat4 lightModel = glm::mat4(1.0f);
 	lightModel = glm::translate(lightModel, lightPos);
 
