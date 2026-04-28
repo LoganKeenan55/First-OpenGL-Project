@@ -1,6 +1,6 @@
 #include"Texture.h"
 
-Texture::Texture(const char* image, const char* texType, GLuint slot, GLenum format, GLenum pixelType) {
+Texture::Texture(const char* image, const char* texType, GLuint slot) {
 
 	type = texType;
 	int imgWidth, imgHeight, numColorChannels;
@@ -25,13 +25,49 @@ Texture::Texture(const char* image, const char* texType, GLuint slot, GLenum for
 
 
 	if (numColorChannels == 4)
-		format = GL_RGBA;
-	else if (numColorChannels == 3)
-		format = GL_RGB;
-	else if (numColorChannels == 1)
-		format = GL_RED;
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			imgWidth,
+			imgHeight,
+			0,
+			GL_RGBA,
+			GL_UNSIGNED_BYTE,
+			bytes
 
-	glTexImage2D(GL_TEXTURE_2D, 0, format, imgWidth, imgHeight, 0, format, pixelType, bytes);
+		);
+	else if (numColorChannels == 3)
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			imgWidth,
+			imgHeight,
+			0,
+			GL_RGB,
+			GL_UNSIGNED_BYTE,
+			bytes
+
+		);
+	else if (numColorChannels == 1)
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			imgWidth,
+			imgHeight,
+			0,
+			GL_RED,
+			GL_UNSIGNED_BYTE,
+			bytes
+
+		);
+	else {
+		throw std::invalid_argument("not valid texture");
+	}
+	
+
 	glGenerateMipmap(GL_TEXTURE_2D);
 	
 

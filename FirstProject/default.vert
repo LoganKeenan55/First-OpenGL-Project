@@ -10,17 +10,23 @@ out vec2 texCoord;
 out vec3 normal;
 
 uniform mat4 camMatrix;
+
 uniform mat4 model;
+uniform mat4 translation;
+uniform mat4 rotation;
+uniform mat4 scale;
+
+
 
 void main()
 {
-	currPos = vec3(model * vec4(aPos,1.0f));
+	currPos = vec3(model * translation *-rotation *scale * vec4(aPos,1.0f));
 	
 	normal = aNormal;
 
 	color = aColor;
 
-	texCoord = aTEX;
+	texCoord = mat2(0.0f,-1.0f,1.0f,0.0f) *aTEX;
 
 	gl_Position = camMatrix * vec4(currPos, 1.0);
 }

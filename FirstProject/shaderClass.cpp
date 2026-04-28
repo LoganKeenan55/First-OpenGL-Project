@@ -13,6 +13,7 @@ std::string get_file_contents(const char* filename)
 		in.close();
 		return(contents);
 	}
+	std::cout << "FAILED TO OPEN: " << filename << std::endl; std::cout << "errno: " << errno << std::endl;
 	throw(errno);
 }
 
