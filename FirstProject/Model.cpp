@@ -84,7 +84,6 @@ void Model::traversNode(unsigned int nextNode, glm::mat4 matrix) {
 
 	trans = glm::translate(trans, translation);
 	rot = glm::mat4_cast(rotation);
-	rot = glm::rotate(rot, glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	sca = glm::scale(sca, scale);
 
