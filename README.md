@@ -1,13 +1,13 @@
-# A small rendering engine built from scratch to understand how modern graphics pipelines work.
+# A rendering engine built with openGL
 
 Features:
-- glTF model loading
 - VAO/VBO/EBO mesh rendering
 - Perspective camera
 - Model/view/projection transformations
 - Texture mapping
 - Phong lighting w/ specular maps support
 - Point / spotlight / direct lighting
+- glTF model loading
 
 <img width="1904" height="1072" alt="image" src="https://github.com/user-attachments/assets/dffdef08-6665-444e-bc8b-4ee7156cac7c" />
 
