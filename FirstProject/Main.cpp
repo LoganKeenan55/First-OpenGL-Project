@@ -1,4 +1,6 @@
+#include"iostream"
 #include"model.h"
+
 
 int gScreenWidth = 1920;
 int gScreenHeight = 1080;
@@ -31,7 +33,7 @@ int main() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(gScreenWidth, gScreenHeight, "Hello, World!", glfwGetPrimaryMonitor(), NULL);
+	GLFWwindow* window = glfwCreateWindow(gScreenWidth, gScreenHeight, "Hello, World!", NULL, NULL);
 
 	if (!window) {
 		std::cout << "Failed to create a window" << std::endl;
@@ -40,6 +42,8 @@ int main() {
 	}
 
 	glfwMakeContextCurrent(window);
+
+	
 
 	gladLoadGL();
 
@@ -91,6 +95,16 @@ int main() {
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
 
+	const GLubyte* vendor = glGetString(GL_VENDOR);
+	const GLubyte* renderer = glGetString(GL_RENDERER);
+	const GLubyte* version = glGetString(GL_VERSION);
+	const GLubyte* glsl = glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+	std::cout << "GPU Vendor   : " << vendor << '\n';
+	std::cout << "GPU Renderer : " << renderer << '\n';
+	std::cout << "OpenGL Ver   : " << version << '\n';
+	std::cout << "GLSL Ver     : " << glsl << '\n';
+
 
 	while (!glfwWindowShouldClose(window)) {
 
@@ -125,6 +139,8 @@ int main() {
 	}
 
 	shaderProgram.Delete();
+
+	
 
 	glfwDestroyWindow(window);
 
